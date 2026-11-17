@@ -1,0 +1,27 @@
+[
+    {
+        "name": "Natia",
+        "student_id": 101,
+        "grade": "A"
+    },
+    {
+        "name": "Giorgi",
+        "student_id": 102,
+        "grade": "B"
+    },
+    {
+        "name": "Ana",
+        "student_id": 103,
+        "grade": "B"
+    },
+    {
+        "name": "Anano",
+        "student_id": 114,
+        "grade": "A"
+    },
+    {
+        "name": "Mariami",
+        "student_id": 107,
+        "grade": "C"
+    }
+]
