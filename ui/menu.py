@@ -8,8 +8,9 @@ class Menu:
         print("2. List all students")
         print("3. Search student by ID")
         print("4. Update student grade")
-        print("5. Exit")
+        print("5. Delete student")
+        print("6. Exit")
 
     @staticmethod
     def get_choice():
-        return input("Enter your choice (1-5): ")
+        return input("Enter your choice (1-6): ")

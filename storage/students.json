@@ -23,5 +23,20 @@
         "name": "Mariami",
         "student_id": 107,
         "grade": "C"
+    },
+    {
+        "name": "Nika",
+        "student_id": 110,
+        "grade": "C"
+    },
+    {
+        "name": "Nana",
+        "student_id": 112,
+        "grade": "B"
+    },
+    {
+        "name": "Giorgi",
+        "student_id": 119,
+        "grade": "D"
     }
 ]

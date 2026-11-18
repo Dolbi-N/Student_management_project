@@ -7,14 +7,12 @@ from ui.menu import Menu
 
 class StudentController:
 
-    MAX_ATTEMPTS = 3
+    MAX_ATTEMPTS = 5
 
     def __init__(self, student_service: StudentService):
         self.student_service = student_service
 
     def get_valid_input(self, prompt, validator):
-        print("\n(Enter 0 to return to main menu)")
-
         for attempt in range(self.MAX_ATTEMPTS):
             user_input = input(f"{prompt}: ").strip()
 
@@ -38,8 +36,33 @@ class StudentController:
 
         return None
 
+    def validate_unique_student_id(self, value):
+        student_id = Validator.validate_student_id(value)
+
+        if self.student_service.find_student_by_id(student_id) is not None:
+            raise ValueError("A student with this ID already exists.")
+
+        return student_id
+
+    def validate_existing_student_id(self, value):
+        student_id = Validator.validate_student_id(value)
+
+        if self.student_service.find_student_by_id(student_id) is None:
+            raise ValueError("Student not found. Please enter an existing ID.")
+
+        return student_id
+
+    def validate_delete_confirmation(self, value):
+        value = value.lower()
+
+        if value not in ("y", "yes", "n", "no"):
+            raise ValueError("Please enter y or n.")
+
+        return value
+
     def add_student(self):
         print("\n===== ADD NEW STUDENT =====")
+        print("(Enter 0 at any step to return to main menu)")
 
         name = self.get_valid_input(
             "Enter student name",
@@ -51,7 +74,7 @@ class StudentController:
 
         student_id = self.get_valid_input(
             "Enter student ID",
-            Validator.validate_student_id
+            self.validate_unique_student_id
         )
 
         if student_id is None:
@@ -88,6 +111,7 @@ class StudentController:
 
     def search_student(self):
         print("\n===== SEARCH STUDENT =====")
+        print("(Enter 0 to return to main menu)")
 
         student_id = self.get_valid_input(
             "Enter student ID",
@@ -108,19 +132,14 @@ class StudentController:
 
     def update_student_grade(self):
         print("\n===== UPDATE STUDENT GRADE =====")
+        print("(Enter 0 at any step to return to main menu)")
 
         student_id = self.get_valid_input(
             "Enter student ID",
-            Validator.validate_student_id
+            self.validate_existing_student_id
         )
 
         if student_id is None:
-            return
-
-        student = self.student_service.find_student_by_id(student_id)
-
-        if student is None:
-            print("\nStudent not found.")
             return
 
         new_grade = self.get_valid_input(
@@ -133,8 +152,46 @@ class StudentController:
 
         try:
             self.student_service.update_grade(student_id, new_grade)
-
             print("\nStudent grade updated successfully.")
+
+        except (ValueError, TypeError) as error:
+            print(f"\nError: {error}")
+
+    def delete_student(self):
+        print("\n===== DELETE STUDENT =====")
+        print("(Enter 0 at any step to return to main menu)")
+
+        student_id = self.get_valid_input(
+            "Enter student ID",
+            self.validate_existing_student_id
+        )
+
+        if student_id is None:
+            return
+
+        student = self.student_service.find_student_by_id(student_id)
+
+        print("\nStudent to be deleted:")
+        print(student.get_details())
+
+        confirmation = self.get_valid_input(
+            "Are you sure you want to delete this student? (y/n)",
+            self.validate_delete_confirmation
+        )
+
+        if confirmation is None:
+            return
+
+        if confirmation in ("n", "no"):
+            print("\nDeletion cancelled.")
+            return
+
+        try:
+            deleted_student = self.student_service.delete_student(student_id)
+            print(
+                f"\nStudent {deleted_student.name} "
+                "deleted successfully."
+            )
 
         except (ValueError, TypeError) as error:
             print(f"\nError: {error}")
@@ -157,8 +214,11 @@ class StudentController:
                 self.update_student_grade()
 
             elif choice == "5":
-                print("\nExiting Student Management System. Goodbye!")
+                self.delete_student()
+
+            elif choice == "6":
+                print("\nExiting Student Management System.")
                 break
 
             else:
-                print("\nInvalid choice. Please select a number from 1 to 5.")
+                print("\nInvalid choice. Please select a number from 1 to 6.")

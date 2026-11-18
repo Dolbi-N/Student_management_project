@@ -37,3 +37,14 @@ class StudentService:
 
         student.grade = new_grade
         self.storage.save_students(self.students)
+
+    def delete_student(self, student_id: int):
+        student = self.find_student_by_id(student_id)
+
+        if student is None:
+            raise ValueError("Student not found.")
+
+        self.students.remove(student)
+        self.storage.save_students(self.students)
+
+        return student

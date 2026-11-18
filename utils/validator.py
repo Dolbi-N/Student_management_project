@@ -6,10 +6,18 @@ class Validator:
         if not isinstance(name, str):
             raise TypeError("Name must be a string.")
 
-        if not name.strip():
+        name = name.strip()
+
+        if not name:
             raise ValueError("Name cannot be empty.")
 
-        return name.strip().title()
+        if not all(
+            char.isalpha() or char.isspace() or char == "-"
+            for char in name
+        ):
+            raise ValueError("Name must contain only letters, spaces or hyphens.")
+
+        return name.title()
 
     @staticmethod
     def validate_student_id(student_id: str):
